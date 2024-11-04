@@ -1,0 +1,72 @@
+# This page contains examples for using the Ripple RPC API
+# You must install the REST Client VSCode extention to run these directly from VSCode
+# You can find RPC docs, including examples that you can run here, at:
+  # Ripple Public API: https://xrpl.org/docs/references/http-websocket-apis/public-api-methods
+
+# Set the URL to the node you want to query
+@URL = {{ripple_mainnet}}
+
+# Nodes:
+@ripple_mainnet = https://s1.ripple.com:51234/
+
+# Set the parameters for the requests
+#@height = "19581556"
+
+# CURL Request template (doesn't work as is), this template is for if you want to run any of these in your terminal
+# curl -s --location --request POST node_url \
+# --header 'Content-Type: application/json' \
+# --data-raw '{
+#   "jsonrpc": "2.0",
+#   "id": 1,
+#   "method": "methodName",
+#   "params": {
+#     "param1": "value1",
+#   }
+# }' | jq . > out.json
+
+# Check node history. Look at the .result.info.complete_ledgers field. Note that there's normally multiple nodes in the pool with different histories.
+POST {{URL}}
+Content-Type: application/json
+
+{
+  "id":1,
+  "jsonrpc":"2.0",
+  "method": "server_info",
+  "params": [{}]
+}
+
+### ledger
+### Returns all the transactions in a ledger
+POST {{URL}}
+Content-Type: application/json
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "method": "ledger",
+  "params": [
+    {
+      "ledger_index": 6917762,
+      "accounts": false,
+      "transactions": true,
+      "expand": true
+    }
+  ]
+}
+
+### account_info
+### Returns all the transactions in a ledger
+POST {{URL}}
+Content-Type: application/json
+
+{
+  "id": 1,
+  "jsonrpc": "2.0",
+  "method": "account_info",
+  "params": [
+    {
+      "ledger_index": 91485441,
+      "account": "rNxp4h8apvRis6mJf9Sh8C6iRxfrDWN7AV"
+    }
+  ]
+}

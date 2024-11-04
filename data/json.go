@@ -12,6 +12,7 @@ import (
 	"strings"
 )
 
+/* TODO: Remove this code once we know that is working good without it
 type ledgerJSON Ledger
 
 // adds all the legacy fields
@@ -41,6 +42,7 @@ func (l *Ledger) UnmarshalJSON(b []byte) error {
 	*l = Ledger(ledger.ledgerJSON)
 	return nil
 }
+*/
 
 // Wrapper types to enable second level of marshalling
 // when found in tx API call

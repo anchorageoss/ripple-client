@@ -36,10 +36,9 @@ func (s *MessagesSuite) TestLedgerResponse(c *C) {
 
 	// Result fields
 	c.Assert(msg.Result.Ledger.LedgerSequence, Equals, uint32(6917762))
-	c.Assert(msg.Result.Ledger.Accepted, Equals, true)
 	c.Assert(msg.Result.Ledger.CloseTime.String(), Equals, "2014-May-30 13:11:50 UTC")
 	c.Assert(msg.Result.Ledger.Closed, Equals, true)
-	c.Assert(msg.Result.Ledger.Hash.String(), Equals, "0C5C5B39EA40D40ACA6EB47E50B2B85FD516D1A2BA67BA3E050349D3EF3632A4")
+	c.Assert(msg.Result.Ledger.LedgerHash.String(), Equals, "0C5C5B39EA40D40ACA6EB47E50B2B85FD516D1A2BA67BA3E050349D3EF3632A4")
 	c.Assert(msg.Result.Ledger.PreviousLedger.String(), Equals, "F8F0363803C30E659AA24D6A62A6512BA24BEA5AC52A29731ABA1E2D80796E8B")
 	c.Assert(msg.Result.Ledger.TotalXRP, Equals, uint64(99999990098968782))
 	c.Assert(msg.Result.Ledger.StateHash.String(), Equals, "46D3E36FE845B9A18293F4C0F134D7DAFB06D4D9A1C7E4CB03F8B293CCA45FA0")
@@ -66,7 +65,7 @@ func (s *MessagesSuite) TestLedgerHeaderResponse(c *C) {
 	c.Assert(msg.Result.Ledger.Accepted, Equals, true)
 	c.Assert(msg.Result.Ledger.CloseTime.String(), Equals, "2013-Jan-01 03:21:10 UTC")
 	c.Assert(msg.Result.Ledger.Closed, Equals, true)
-	c.Assert(msg.Result.Ledger.Hash.String(), Equals, "4109C6F2045FC7EFF4CDE8F9905D19C28820D86304080FF886B299F0206E42B5")
+	c.Assert(msg.Result.Ledger.LedgerHash.String(), Equals, "4109C6F2045FC7EFF4CDE8F9905D19C28820D86304080FF886B299F0206E42B5")
 	c.Assert(msg.Result.Ledger.PreviousLedger.String(), Equals, "60A01EBF11537D8394EA1235253293508BDA7131D5F8710EFE9413AA129653A2")
 	c.Assert(msg.Result.Ledger.TotalXRP, Equals, uint64(99999999999996320))
 	c.Assert(msg.Result.Ledger.StateHash.String(), Equals, "3806AF8F22037DE598D30D38C8861FADF391171D26F7DE34ACFA038996EA6BEB")

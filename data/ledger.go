@@ -15,6 +15,7 @@ type LedgerHeader struct {
 type Ledger struct {
 	LedgerHeader
 	Hash         Hash256          `json:"hash"`
+	LedgerHash   Hash256          `json:"ledger_hash"`
 	Closed       bool             `json:"closed"`
 	Accepted     bool             `json:"accepted"`
 	Transactions TransactionSlice `json:"transactions,omitempty"`
@@ -29,9 +30,10 @@ func NewEmptyLedger(sequence uint32) *Ledger {
 	}
 }
 
-func (l Ledger) GetType() string    { return "LedgerMaster" }
-func (l Ledger) Prefix() HashPrefix { return HP_LEDGER_MASTER }
-func (l Ledger) NodeType() NodeType { return NT_LEDGER }
-func (l Ledger) Ledger() uint32     { return l.LedgerSequence }
-func (l Ledger) NodeId() *Hash256   { return &l.Hash }
-func (l Ledger) GetHash() *Hash256  { return &l.Hash }
+func (l Ledger) GetType() string         { return "LedgerMaster" }
+func (l Ledger) Prefix() HashPrefix      { return HP_LEDGER_MASTER }
+func (l Ledger) NodeType() NodeType      { return NT_LEDGER }
+func (l Ledger) Ledger() uint32          { return l.LedgerSequence }
+func (l Ledger) NodeId() *Hash256        { return &l.Hash }
+func (l Ledger) GetHash() *Hash256       { return &l.Hash }
+func (l Ledger) GetLedgerHash() *Hash256 { return &l.LedgerHash }
