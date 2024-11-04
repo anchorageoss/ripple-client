@@ -8,25 +8,32 @@ type TransactionType uint16
 
 const (
 	// LedgerEntryType values come from rippled's "LedgerFormats.h"
-	SIGNER_LIST      LedgerEntryType = 0x53 // 'S'
-	TICKET           LedgerEntryType = 0x54 // 'T'
-	ACCOUNT_ROOT     LedgerEntryType = 0x61 // 'a'
-	DIRECTORY        LedgerEntryType = 0x64 // 'd'
-	AMENDMENTS       LedgerEntryType = 0x66 // 'f'
-	LEDGER_HASHES    LedgerEntryType = 0x68 // 'h'
-	OFFER            LedgerEntryType = 0x6f // 'o'
-	RIPPLE_STATE     LedgerEntryType = 0x72 // 'r'
-	FEE_SETTINGS     LedgerEntryType = 0x73 // 's'
-	ESCROW           LedgerEntryType = 0x75 // 'u'
-	PAY_CHANNEL      LedgerEntryType = 0x78 // 'x'
-	CHECK            LedgerEntryType = 0x43 // 'C'
-	DEPOSIT_PRE_AUTH LedgerEntryType = 0x70 // 'p'
-	NEGATIVE_UNL     LedgerEntryType = 0x4e // 'N'
-	NFTOKEN_PAGE     LedgerEntryType = 0x50 // 'P'
-	NFTOKEN_OFFER    LedgerEntryType = 0x37 // '7'
-	AMM_LT           LedgerEntryType = 0x79
+	// https://xrpl.org/docs/references/protocol/ledger-data/ledger-entry-types#ledger-entry-types
+	ACCOUNT_ROOT                         LedgerEntryType = 0x61 // 'a'
+	AMENDMENTS                           LedgerEntryType = 0x66 // 'f'
+	AMM_LT                               LedgerEntryType = 0x79
+	BRIDGE                               LedgerEntryType = 0x69 // 'i'
+	CHECK                                LedgerEntryType = 0x43 // 'C'
+	DEPOSIT_PRE_AUTH                     LedgerEntryType = 0x70 // 'p'
+	DID                                  LedgerEntryType = 0x49 // 'I'
+	DIRECTORY                            LedgerEntryType = 0x64 // 'd'
+	ESCROW                               LedgerEntryType = 0x75 // 'u'
+	FEE_SETTINGS                         LedgerEntryType = 0x73 // 's'
+	LEDGER_HASHES                        LedgerEntryType = 0x68 // 'h'
+	NEGATIVE_UNL                         LedgerEntryType = 0x4e // 'N'
+	NFTOKEN_OFFER                        LedgerEntryType = 0x37 // '7'
+	NFTOKEN_PAGE                         LedgerEntryType = 0x50 // 'P'
+	OFFER                                LedgerEntryType = 0x6f // 'o'
+	ORACLE                               LedgerEntryType = 0x80
+	PAY_CHANNEL                          LedgerEntryType = 0x78 // 'x'
+	RIPPLE_STATE                         LedgerEntryType = 0x72 // 'r'
+	SIGNER_LIST                          LedgerEntryType = 0x53 // 'S'
+	TICKET                               LedgerEntryType = 0x54 // 'T'
+	XCHAIN_OWNED_CLAIM_ID                LedgerEntryType = 0x71 // 'q'
+	XCHAIN_OWNED_CREATE_ACCOUNT_CLAIM_ID LedgerEntryType = 0x74
 
 	// TransactionType values come from rippled's "TxFormats.h"
+	// https://xrpl.org/docs/references/protocol/transactions/types#transaction-types
 	PAYMENT              TransactionType = 0
 	ESCROW_CREATE        TransactionType = 1
 	ESCROW_FINISH        TransactionType = 2
@@ -59,10 +66,10 @@ const (
 	AMM_VOTE             TransactionType = 38
 	AMM_BID              TransactionType = 39
 	AMM_DELETE           TransactionType = 40
-
-	AMENDMENT  TransactionType = 100
-	SET_FEE    TransactionType = 101
-	UNL_MODIFY TransactionType = 102
+	DID_SET              TransactionType = 41
+	AMENDMENT            TransactionType = 100
+	SET_FEE              TransactionType = 101
+	UNL_MODIFY           TransactionType = 102
 )
 
 var LedgerFactory = [...]func() Hashable{
@@ -70,23 +77,30 @@ var LedgerFactory = [...]func() Hashable{
 }
 
 var LedgerEntryFactory = [...]func() LedgerEntry{
-	ACCOUNT_ROOT:     func() LedgerEntry { return &AccountRoot{leBase: leBase{LedgerEntryType: ACCOUNT_ROOT}} },
-	DIRECTORY:        func() LedgerEntry { return &Directory{leBase: leBase{LedgerEntryType: DIRECTORY}} },
-	AMENDMENTS:       func() LedgerEntry { return &Amendments{leBase: leBase{LedgerEntryType: AMENDMENTS}} },
-	LEDGER_HASHES:    func() LedgerEntry { return &LedgerHashes{leBase: leBase{LedgerEntryType: LEDGER_HASHES}} },
-	OFFER:            func() LedgerEntry { return &Offer{leBase: leBase{LedgerEntryType: OFFER}} },
-	RIPPLE_STATE:     func() LedgerEntry { return &RippleState{leBase: leBase{LedgerEntryType: RIPPLE_STATE}} },
-	FEE_SETTINGS:     func() LedgerEntry { return &FeeSettings{leBase: leBase{LedgerEntryType: FEE_SETTINGS}} },
-	ESCROW:           func() LedgerEntry { return &Escrow{leBase: leBase{LedgerEntryType: ESCROW}} },
-	SIGNER_LIST:      func() LedgerEntry { return &SignerList{leBase: leBase{LedgerEntryType: SIGNER_LIST}} },
-	TICKET:           func() LedgerEntry { return &Ticket{leBase: leBase{LedgerEntryType: TICKET}} },
-	PAY_CHANNEL:      func() LedgerEntry { return &PayChannel{leBase: leBase{LedgerEntryType: PAY_CHANNEL}} },
-	CHECK:            func() LedgerEntry { return &Check{leBase: leBase{LedgerEntryType: CHECK}} },
-	DEPOSIT_PRE_AUTH: func() LedgerEntry { return &DepositPreAuth{leBase: leBase{LedgerEntryType: DEPOSIT_PRE_AUTH}} },
-	NEGATIVE_UNL:     func() LedgerEntry { return &NegativeUNL{leBase: leBase{LedgerEntryType: NEGATIVE_UNL}} },
-	NFTOKEN_PAGE:     func() LedgerEntry { return &NFTokenPage{leBase: leBase{LedgerEntryType: NFTOKEN_PAGE}} },
-	NFTOKEN_OFFER:    func() LedgerEntry { return &NFTokenOffer{leBase: leBase{LedgerEntryType: NFTOKEN_OFFER}} },
-	AMM_LT:           func() LedgerEntry { return &AMM{leBase: leBase{LedgerEntryType: AMM_LT}} },
+	ACCOUNT_ROOT:          func() LedgerEntry { return &AccountRoot{leBase: leBase{LedgerEntryType: ACCOUNT_ROOT}} },
+	AMENDMENTS:            func() LedgerEntry { return &Amendments{leBase: leBase{LedgerEntryType: AMENDMENTS}} },
+	AMM_LT:                func() LedgerEntry { return &AMM{leBase: leBase{LedgerEntryType: AMM_LT}} },
+	BRIDGE:                func() LedgerEntry { return &Bridge{leBase: leBase{LedgerEntryType: BRIDGE}} },
+	CHECK:                 func() LedgerEntry { return &Check{leBase: leBase{LedgerEntryType: CHECK}} },
+	DEPOSIT_PRE_AUTH:      func() LedgerEntry { return &DepositPreAuth{leBase: leBase{LedgerEntryType: DEPOSIT_PRE_AUTH}} },
+	DID:                   func() LedgerEntry { return &Did{leBase: leBase{LedgerEntryType: DID}} },
+	DIRECTORY:             func() LedgerEntry { return &Directory{leBase: leBase{LedgerEntryType: DIRECTORY}} },
+	ESCROW:                func() LedgerEntry { return &Escrow{leBase: leBase{LedgerEntryType: ESCROW}} },
+	FEE_SETTINGS:          func() LedgerEntry { return &FeeSettings{leBase: leBase{LedgerEntryType: FEE_SETTINGS}} },
+	LEDGER_HASHES:         func() LedgerEntry { return &LedgerHashes{leBase: leBase{LedgerEntryType: LEDGER_HASHES}} },
+	NEGATIVE_UNL:          func() LedgerEntry { return &NegativeUNL{leBase: leBase{LedgerEntryType: NEGATIVE_UNL}} },
+	NFTOKEN_OFFER:         func() LedgerEntry { return &NFTokenOffer{leBase: leBase{LedgerEntryType: NFTOKEN_OFFER}} },
+	NFTOKEN_PAGE:          func() LedgerEntry { return &NFTokenPage{leBase: leBase{LedgerEntryType: NFTOKEN_PAGE}} },
+	OFFER:                 func() LedgerEntry { return &Offer{leBase: leBase{LedgerEntryType: OFFER}} },
+	ORACLE:                func() LedgerEntry { return &Oracle{leBase: leBase{LedgerEntryType: ORACLE}} },
+	PAY_CHANNEL:           func() LedgerEntry { return &PayChannel{leBase: leBase{LedgerEntryType: PAY_CHANNEL}} },
+	RIPPLE_STATE:          func() LedgerEntry { return &RippleState{leBase: leBase{LedgerEntryType: RIPPLE_STATE}} },
+	SIGNER_LIST:           func() LedgerEntry { return &SignerList{leBase: leBase{LedgerEntryType: SIGNER_LIST}} },
+	TICKET:                func() LedgerEntry { return &Ticket{leBase: leBase{LedgerEntryType: TICKET}} },
+	XCHAIN_OWNED_CLAIM_ID: func() LedgerEntry { return &XChainOwnedClaimID{leBase: leBase{LedgerEntryType: XCHAIN_OWNED_CLAIM_ID}} },
+	XCHAIN_OWNED_CREATE_ACCOUNT_CLAIM_ID: func() LedgerEntry {
+		return &XChainOwnedCreateAccountClaimID{leBase: leBase{LedgerEntryType: XCHAIN_OWNED_CREATE_ACCOUNT_CLAIM_ID}}
+	},
 }
 
 var TxFactory = [...]func() Transaction{
@@ -124,46 +138,57 @@ var TxFactory = [...]func() Transaction{
 	AMM_VOTE:             func() Transaction { return &AMMVote{TxBase: TxBase{TransactionType: AMM_VOTE}} },
 	AMM_BID:              func() Transaction { return &AMMBid{TxBase: TxBase{TransactionType: AMM_BID}} },
 	AMM_DELETE:           func() Transaction { return &AMMDelete{TxBase: TxBase{TransactionType: AMM_DELETE}} },
+	DID_SET:              func() Transaction { return &AMMDelete{TxBase: TxBase{TransactionType: DID_SET}} },
 }
 
 var ledgerEntryNames = [...]string{
-	ACCOUNT_ROOT:     "AccountRoot",
-	DIRECTORY:        "DirectoryNode",
-	AMENDMENTS:       "Amendments",
-	LEDGER_HASHES:    "LedgerHashes",
-	OFFER:            "Offer",
-	RIPPLE_STATE:     "RippleState",
-	FEE_SETTINGS:     "FeeSettings",
-	ESCROW:           "Escrow",
-	SIGNER_LIST:      "SignerList",
-	TICKET:           "Ticket",
-	PAY_CHANNEL:      "PayChannel",
-	CHECK:            "Check",
-	DEPOSIT_PRE_AUTH: "DepositPreauth",
-	NEGATIVE_UNL:     "NegativeUNL",
-	NFTOKEN_PAGE:     "NFTokenPage",
-	NFTOKEN_OFFER:    "NFTokenOffer",
-	AMM_LT:           "AMM",
+	ACCOUNT_ROOT:                         "AccountRoot",
+	AMENDMENTS:                           "Amendments",
+	AMM_LT:                               "AMM",
+	BRIDGE:                               "Bridge",
+	CHECK:                                "Check",
+	DEPOSIT_PRE_AUTH:                     "DepositPreauth",
+	DID:                                  "DID",
+	DIRECTORY:                            "DirectoryNode",
+	ESCROW:                               "Escrow",
+	FEE_SETTINGS:                         "FeeSettings",
+	LEDGER_HASHES:                        "LedgerHashes",
+	NEGATIVE_UNL:                         "NegativeUNL",
+	NFTOKEN_OFFER:                        "NFTokenOffer",
+	NFTOKEN_PAGE:                         "NFTokenPage",
+	OFFER:                                "Offer",
+	ORACLE:                               "Oracle",
+	PAY_CHANNEL:                          "PayChannel",
+	RIPPLE_STATE:                         "RippleState",
+	SIGNER_LIST:                          "SignerList",
+	TICKET:                               "Ticket",
+	XCHAIN_OWNED_CLAIM_ID:                "XChainOwnedClaimID",
+	XCHAIN_OWNED_CREATE_ACCOUNT_CLAIM_ID: "XChainOwnedCreateAccountClaimID",
 }
 
 var ledgerEntryTypes = map[string]LedgerEntryType{
-	"AccountRoot":    ACCOUNT_ROOT,
-	"DirectoryNode":  DIRECTORY,
-	"Amendments":     AMENDMENTS,
-	"LedgerHashes":   LEDGER_HASHES,
-	"Offer":          OFFER,
-	"RippleState":    RIPPLE_STATE,
-	"FeeSettings":    FEE_SETTINGS,
-	"Escrow":         ESCROW,
-	"SignerList":     SIGNER_LIST,
-	"Ticket":         TICKET,
-	"PayChannel":     PAY_CHANNEL,
-	"Check":          CHECK,
-	"DepositPreauth": DEPOSIT_PRE_AUTH,
-	"NegativeUNL":    NEGATIVE_UNL,
-	"NFTokenPage":    NFTOKEN_PAGE,
-	"NFTokenOffer":   NFTOKEN_OFFER,
-	"AMM":            AMM_LT,
+	"AccountRoot":                     ACCOUNT_ROOT,
+	"Amendments":                      AMENDMENTS,
+	"AMM":                             AMM_LT,
+	"Bridge":                          BRIDGE,
+	"Check":                           CHECK,
+	"DID":                             DID,
+	"DepositPreauth":                  DEPOSIT_PRE_AUTH,
+	"DirectoryNode":                   DIRECTORY,
+	"Escrow":                          ESCROW,
+	"FeeSettings":                     FEE_SETTINGS,
+	"LedgerHashes":                    LEDGER_HASHES,
+	"NegativeUNL":                     NEGATIVE_UNL,
+	"NFTokenOffer":                    NFTOKEN_OFFER,
+	"NFTokenPage":                     NFTOKEN_PAGE,
+	"Offer":                           OFFER,
+	"Oracle":                          ORACLE,
+	"PayChannel":                      PAY_CHANNEL,
+	"RippleState":                     RIPPLE_STATE,
+	"SignerList":                      SIGNER_LIST,
+	"Ticket":                          TICKET,
+	"XChainOwnedClaimID":              XCHAIN_OWNED_CLAIM_ID,
+	"XChainOwnedCreateAccountClaimID": XCHAIN_OWNED_CREATE_ACCOUNT_CLAIM_ID,
 }
 
 var txNames = [...]string{
@@ -201,6 +226,7 @@ var txNames = [...]string{
 	AMM_VOTE:             "AMMVote",
 	AMM_BID:              "AMMBid",
 	AMM_DELETE:           "AMMDelete",
+	DID_SET:              "DIDSet",
 }
 
 var txTypes = map[string]TransactionType{
@@ -238,6 +264,7 @@ var txTypes = map[string]TransactionType{
 	"AMMVote":              AMM_VOTE,
 	"AMMBid":               AMM_BID,
 	"AMMDelete":            AMM_DELETE,
+	"DIDSet":               DID_SET,
 }
 
 var HashableTypes []string

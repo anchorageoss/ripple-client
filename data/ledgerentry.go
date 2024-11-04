@@ -264,6 +264,49 @@ type AMM struct {
 	OwnerNode      *NodeIndex       `json:",omitempty"`
 }
 
+type Bridge struct {
+	leBase
+	Flags   *LedgerEntryFlag `json:",omitempty"`
+	Account *Account         `json:",omitempty"`
+}
+
+func (b *Bridge) Affects(account Account) bool {
+	return b.Account.Equals(account)
+}
+
+type Did struct {
+	leBase
+	Account *Account `json:",omitempty"`
+}
+
+func (d *Did) Affects(account Account) bool {
+	return d.Account.Equals(account)
+}
+
+type Oracle struct {
+	leBase
+}
+
+func (o *Oracle) Affects(account Account) bool { return false }
+
+type XChainOwnedClaimID struct {
+	leBase
+	Account *Account `json:",omitempty"`
+}
+
+func (x *XChainOwnedClaimID) Affects(account Account) bool {
+	return x.Account.Equals(account)
+}
+
+type XChainOwnedCreateAccountClaimID struct {
+	leBase
+	Account *Account `json:",omitempty"`
+}
+
+func (x *XChainOwnedCreateAccountClaimID) Affects(account Account) bool {
+	return x.Account.Equals(account)
+}
+
 func (a *AccountRoot) Affects(account Account) bool {
 	return a.Account != nil && a.Account.Equals(account)
 }
