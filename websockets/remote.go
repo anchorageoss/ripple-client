@@ -13,9 +13,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/anchorageoss/ripple-client/data"
 	"github.com/golang/glog"
 	"github.com/gorilla/websocket"
-	"github.com/rubblelabs/ripple/data"
 )
 
 const (
