@@ -131,6 +131,54 @@ type AMMDelete struct {
 	Asset2 Asset
 }
 
+type DidSet struct {
+	TxBase
+}
+
+type DidDelete struct {
+	TxBase
+}
+
+type OracleSet struct {
+	TxBase
+}
+
+type OracleDelete struct {
+	TxBase
+}
+
+type XChainAccountCreateCommit struct {
+	TxBase
+}
+
+type XChainAddAccountCreateAttestation struct {
+	TxBase
+}
+
+type XChainAddClaimAttestation struct {
+	TxBase
+}
+
+type XChainClaim struct {
+	TxBase
+}
+
+type XChainCommit struct {
+	TxBase
+}
+
+type XChainCreateBridge struct {
+	TxBase
+}
+
+type XChainCreateClaimID struct {
+	TxBase
+}
+
+type XChainModifyBridge struct {
+	TxBase
+}
+
 type TrustSet struct {
 	TxBase
 	LimitAmount    Amount
