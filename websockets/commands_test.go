@@ -2,7 +2,6 @@ package websockets
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"testing"
 
@@ -132,9 +131,6 @@ func (s *MessagesSuite) TestLedgerResponseWithCredentialCreateTransaction(c *C) 
 	msg := &LedgerCommand{}
 	readResponseFile(c, msg, "testdata/ledger_credentialCreate_tx.json")
 
-	// Response fields
-	fmt.Printf("msg: %v\n", msg)
-
 	c.Assert(msg.Status, Equals, "success")
 	c.Assert(msg.Type, Equals, "response")
 
@@ -158,6 +154,65 @@ func (s *MessagesSuite) TestLedgerResponseWithCredentialCreateTransaction(c *C) 
 	// Check that this is specifically a CreateCredential transaction
 	CredentialCreate := tx.Transaction.(*data.CredentialCreate)
 	c.Assert(CredentialCreate.GetTransactionType(), Equals, data.CREDENTIAL_CREATE)
+}
+
+func (s *MessagesSuite) TestLedgerResponseWithMPTokenLedgerEntryTypeTransaction(c *C) {
+	msg := &LedgerCommand{}
+	readResponseFile(c, msg, "testdata/ledger_MPTokenLedgerEntryType_tx.json")
+
+	// Response fields
+	c.Assert(msg.Status, Equals, "success")
+	c.Assert(msg.Type, Equals, "response")
+
+	// Result fields - basic checks first
+	c.Assert(msg.Result.Ledger.LedgerSequence, Equals, uint32(99228110))
+	c.Assert(msg.Result.Ledger.Closed, Equals, true)
+	c.Assert(msg.Result.Ledger.LedgerHash.String(), Equals, "6F0E280A73195BF0EE3E4AB9063D783D79633E2C1F3E04EB6F9650D3D0B0C6C4")
+
+	c.Assert(msg.Result.Ledger.Transactions, HasLen, 38)
+
+	// Find the transaction that affects MPToken ledger entries
+	var tx *data.TransactionWithMetaData
+	for _, txn := range msg.Result.Ledger.Transactions {
+		if txn.MetaData.TransactionIndex == 33 { // MPToken transaction has index 33
+			tx = txn
+		}
+	}
+
+	c.Assert(tx, NotNil)
+	c.Assert(tx.GetHash().String(), Equals, "F5BB2974F02BD6670731F8CD53295795208B20FCB909E062E227DDD3124AB76F")
+	c.Assert(tx.MetaData.AffectedNodes, HasLen, 3)
+
+	// Verify that we can parse MPToken and MPTokenIssuance ledger entries
+	mpTokenFound := false
+	mpTokenIssuanceFound := false
+	for _, node := range tx.MetaData.AffectedNodes {
+		if node.ModifiedNode != nil {
+			if node.ModifiedNode.LedgerEntryType.String() == "MPToken" {
+				mpTokenFound = true
+				// Verify it's actually an MPToken entry
+				mpToken, ok := node.ModifiedNode.FinalFields.(*data.MPToken)
+				c.Assert(ok, Equals, true)
+				c.Assert(mpToken != nil, Equals, true)
+				// Check some fields exist
+				c.Assert(mpToken.MPTAmount, NotNil)
+				c.Assert(mpToken.MPTokenIssuanceID, NotNil)
+			}
+			if node.ModifiedNode.LedgerEntryType.String() == "MPTokenIssuance" {
+				mpTokenIssuanceFound = true
+				// Verify it's actually an MPTokenIssuance entry
+				mpTokenIssuance, ok := node.ModifiedNode.FinalFields.(*data.MPTokenIssuance)
+				c.Assert(ok, Equals, true)
+				c.Assert(mpTokenIssuance != nil, Equals, true)
+				// Check some fields exist
+				c.Assert(mpTokenIssuance.OutstandingAmount, NotNil)
+				c.Assert(mpTokenIssuance.Issuer, NotNil)
+			}
+		}
+	}
+
+	c.Assert(mpTokenFound, Equals, true)
+	c.Assert(mpTokenIssuanceFound, Equals, true)
 }
 
 func (s *MessagesSuite) TestLedgerHeaderResponse(c *C) {

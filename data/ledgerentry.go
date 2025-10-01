@@ -170,6 +170,26 @@ type Credential struct {
 	URI               *VariableLength `json:",omitempty"`
 }
 
+type MPToken struct {
+	leBase
+	Account           *Account         `json:",omitempty"`
+	Flags             *LedgerEntryFlag `json:",omitempty"`
+	MPTAmount         *string          `json:",omitempty"`
+	MPTokenIssuanceID *Hash256         `json:",omitempty"`
+	OwnerNode         *NodeIndex       `json:",omitempty"`
+}
+
+type MPTokenIssuance struct {
+	leBase
+	Flags             *LedgerEntryFlag `json:",omitempty"`
+	Issuer            *Account         `json:",omitempty"`
+	MPTokenMetadata   *VariableLength  `json:",omitempty"`
+	MaximumAmount     *string          `json:",omitempty"`
+	OutstandingAmount *string          `json:",omitempty"`
+	OwnerNode         *NodeIndex       `json:",omitempty"`
+	Sequence          *uint32          `json:",omitempty"`
+}
+
 type Ticket struct {
 	leBase
 	Flags          *LedgerEntryFlag `json:",omitempty"`
@@ -345,6 +365,12 @@ func (s *SignerList) Affects(account Account) bool {
 }
 func (c *Credential) Affects(account Account) bool {
 	return c.Issuer != nil && c.Issuer.Equals(account) || c.Subject != nil && c.Subject.Equals(account)
+}
+func (m *MPToken) Affects(account Account) bool {
+	return m.Account != nil && m.Account.Equals(account)
+}
+func (m *MPTokenIssuance) Affects(account Account) bool {
+	return m.Issuer != nil && m.Issuer.Equals(account)
 }
 func (t *Ticket) Affects(account Account) bool { return t.Account != nil && t.Account.Equals(account) }
 func (p *PayChannel) Affects(account Account) bool {
